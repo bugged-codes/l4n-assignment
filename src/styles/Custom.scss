@@ -1,0 +1,21 @@
+@import "../../node_modules/bootstrap/scss/_functions.scss";
+@import "../../node_modules/bootstrap/scss/_variables.scss";
+
+$custom-theme-colors: (
+    'customBg1': #252d4a,
+    'customBg2': #7cc6fe,
+);
+
+$theme-colors: map-merge($custom-theme-colors, $theme-colors );
+
+
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+
+
+body {
+    background-color: #7cc6fe;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }

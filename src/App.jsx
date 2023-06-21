@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './styles/App.css';
-import { Button } from 'react-bootstrap';
+import './styles/Custom.scss';
 
 const questions = [
 	{
@@ -43,12 +43,15 @@ const questions = [
 
 function App() {
 	const [showScore, setShowScore] = useState(false);
-	const [score, setScore] = useState(0);
+	const [correctScore, setCorrectScore] = useState(0);
+	const [wrongScore, setWrongScore] = useState(0);
 	const [currentQuestion, setCurrentQuestion] = useState(0);
 
 	function handleAnswer(isCorrect) {
 		if (isCorrect) {
-			setScore(score + 1);
+			setCorrectScore(correctScore + 1);
+		} else {
+			setWrongScore(wrongScore + 1);
 		}
 
 		const nextQuestion = currentQuestion + 1;
@@ -61,38 +64,50 @@ function App() {
 
 	const interval = 100 / questions.length;
 
-	const progress = (interval * score).toFixed(2);
-	console.log(progress);
+	const correctProgress = (interval * correctScore).toFixed(2);
+	const wrongProgress = (interval * wrongScore).toFixed(2);
+	console.log(correctProgress, 'and', wrongProgress);
 
 	return (
-		<div className="app">
-			{showScore ? (
-				<div className="score-section">
-					Você pontuou {score} de {questions.length}
+		<>
+			<div className="progress-container mb-5 d-flex flex-row justify-content-between w-100 ">
+				<div className="position-relative">
+					<progress className="correct-progress" value={correctProgress} max={100} />
+					<span className="position-absolute top-50 start-0">{`${correctProgress * (questions.length / 100)} / ${questions.length}`}</span>
 				</div>
-			) : (
-				<section>
-					<div>
-						<Button variant="primary">Primary</Button>
+				<span className="rounded-circle bg-customBg1 text-white p-2 fw-bold ">{Math.floor(correctProgress)}</span>
+				<div className="position-relative">
+					<progress className="wrong-progress" value={wrongProgress} max={100} />
+					<span className="position-absolute top-50 start-0">{`${wrongProgress * (questions.length / 100)} / ${questions.length}`}</span>
+				</div>
+			</div>
+
+			<div className="app flex-column align-items-center">
+				{showScore ? (
+					<div className="score-section d-flex fs-24 align-items-center">
+						Você pontuou {correctScore} de {questions.length}
 					</div>
-					<div>
-						<div className="question-section">
-							<div className="question-count">
-								<span>Questão {currentQuestion + 1}</span>/{questions.length}
+				) : (
+					<>
+						<div>
+							<div className="question-section">
+								<div className="question-count">
+									<span>Questão {currentQuestion + 1}</span>/{questions.length}
+								</div>
+								<div className="question-text">{questions[currentQuestion].questionText}</div>
 							</div>
-							<div className="question-text">{questions[currentQuestion].questionText}</div>
+							<div className="answer-section">
+								{questions[currentQuestion].answerOptions.map((answerOption, index) => (
+									<button onClick={() => handleAnswer(answerOption.isCorrect)} key={index}>
+										{answerOption.answerText}
+									</button>
+								))}
+							</div>
 						</div>
-						<div className="answer-section">
-							{questions[currentQuestion].answerOptions.map((answerOption, index) => (
-								<button onClick={() => handleAnswer(answerOption.isCorrect)} key={index}>
-									{answerOption.answerText}
-								</button>
-							))}
-						</div>
-					</div>
-				</section>
-			)}
-		</div>
+					</>
+				)}
+			</div>
+		</>
 	);
 }
 
